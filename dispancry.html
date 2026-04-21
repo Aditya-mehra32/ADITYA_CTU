@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Dispensary</title>
+  <meta name="description"
+    content="Campus dispensary medicine guide: search medicines, browse by category, see dosage and precautions, and chat with our assistant." />
+  <style>
+    :root {
+      --cd-bg: #f4f6fb;
+      --cd-card: #ffffff;
+      --cd-text: #0f172a;
+      --cd-muted: #6b7280;
+      --cd-accent: #6366f1;
+      --cd-accent-2: #4f46e5;
+      --cd-border: #e6e9ef;
+      --cd-soft: #eef2ff;
+      --cd-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--cd-bg);
+      color: var(--cd-text);
+      font-family: Inter, system-ui, "Segoe UI", Arial, sans-serif;
+      min-height: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .cd-container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+
+    .cd-header {
+      border-bottom: 1px solid var(--cd-border);
+      background: #fff;
+    }
+
+    .cd-header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+    }
+
+    .cd-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cd-brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--cd-accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    .cd-brand-name {
+      font-weight: 700;
+    }
+
+    .cd-brand-sub {
+      font-size: 12px;
+      color: var(--cd-muted);
+    }
+
+    .cd-nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cd-nav-link {
+      color: var(--cd-muted);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .cd-nav-link:hover {
+      color: var(--cd-text);
+    }
+
+    .cd-btn {
+      border: 0;
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .cd-btn-primary {
+      background: var(--cd-accent);
+      color: #fff;
+    }
+
+    .cd-btn-primary:hover {
+      background: var(--cd-accent-2);
+    }
+
+    .cd-card {
+      background: var(--cd-card);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--cd-shadow);
+      margin-bottom: 16px;
+    }
+
+    .cd-card-title {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .cd-card-sub {
+      color: var(--cd-muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .cd-pill {
+      display: inline-block;
+      background: var(--cd-soft);
+      color: var(--cd-accent);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .cd-h2 {
+      font-size: 22px;
+      margin: 8px 0 12px;
+    }
+
+    .cd-lead {
+      color: var(--cd-muted);
+      margin: 0 0 12px;
+      line-height: 1.5;
+    }
+
+    .cd-fine {
+      color: var(--cd-muted);
+      font-size: 13px;
+      margin: 6px 0;
+    }
+
+    .cd-mono {
+      font-family: Menlo, monospace;
+      color: var(--cd-text);
+    }
+
+    .cd-section-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .cd-divider {
+      height: 1px;
+      background: var(--cd-border);
+      margin: 14px 0;
+    }
+
+    .cd-status {
+      font-size: 12px;
+      color: var(--cd-muted);
+      margin-top: 6px;
+    }
+
+    .cd-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--cd-border);
+      background: #fff;
+      font-size: 14px;
+      color: var(--cd-text);
+      outline: none;
+    }
+
+    .cd-input:focus {
+      border-color: var(--cd-accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    .cd-hero {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .cd-search-row {
+      display: flex;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .cd-cat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .cd-cat-card {
+      background: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--cd-border);
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+    }
+
+    .cd-cat-card:hover {
+      border-color: var(--cd-accent);
+    }
+
+    .cd-cat-title {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .cd-med-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .cd-med-card {
+      background: #fff;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--cd-soft);
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .cd-med-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--cd-shadow);
+    }
+
+    .cd-med-name {
+      font-weight: 700;
+    }
+
+    .cd-med-dose {
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    .cd-med-stock {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--cd-muted);
+    }
+
+    .cd-modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 16px;
+    }
+
+    .cd-modal {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.25);
+    }
+
+    .cd-modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .cd-icon-btn {
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--cd-muted);
+    }
+
+    .cd-chat-fab {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: var(--cd-accent);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+      z-index: 40;
+    }
+
+    .cd-chat-panel {
+      position: fixed;
+      right: 20px;
+      bottom: 78px;
+      width: 340px;
+      max-height: 460px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 18px 50px rgba(2, 6, 23, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 40;
+    }
+
+    .cd-chat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--cd-border);
+    }
+
+    .cd-chat-log {
+      padding: 12px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cd-msg {
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      max-width: 85%;
+    }
+
+    .cd-msg-bot {
+      background: var(--cd-soft);
+      color: var(--cd-text);
+      align-self: flex-start;
+    }
+
+    .cd-msg-me {
+      background: var(--cd-accent);
+      color: #fff;
+      align-self: flex-end;
+    }
+
+    .cd-chat-form {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--cd-border);
+    }
+
+    .cd-chat-form .cd-input {
+      flex: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 820px) {
+      .cd-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .cd-search-row {
+        flex-direction: column;
+      }
+
+      .cd-chat-panel {
+        right: 12px;
+        left: 12px;
+        width: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="cd-header">
+    <div class="cd-container cd-header-inner">
+      <div class="cd-brand">
+        <a href="landingpages.html" style="font-size: 24px; text-decoration: none; margin-right: 12px; color: var(--cd-muted);">&larr;</a>
+        <div class="cd-brand-mark">D</div>
+        <div>
+          <div class="cd-brand-name">Campus Dispensary</div>
+          <div class="cd-brand-sub">College dispensary medicine guide</div>
+        </div>
+      </div>
+      <nav class="cd-nav">
+        <a class="cd-nav-link" href="#medicines">Medicines</a>
+        <a class="cd-nav-link" href="#categories">Categories</a>
+        <a class="cd-nav-link" href="#note">Disclaimer</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="cd-container cd-hero">
+      <div>
+        <div class="cd-pill">Medicine classifications • Student-friendly</div>
+        <h2 class="cd-h2">Find the right medicine fast</h2>
+        <p class="cd-lead">Search or browse categories. Tap a medicine card for purpose, when to take, dosage, and
+          precautions.</p>
+        <div class="cd-search-row">
+          <input id="searchInput" class="cd-input" placeholder="Search medicine (e.g., paracetamol, cold, allergy…)" />
+          <select id="categoryFilter" class="cd-input">
+            <option value="all" selected>All categories</option>
+            <option value="pain">Pain relief</option>
+            <option value="fever">Fever</option>
+            <option value="cold">Cold &amp; cough</option>
+            <option value="allergy">Allergy</option>
+            <option value="digestive">Digestive issues</option>
+            <option value="firstaid">First aid</option>
+          </select>
+        </div>
+        <div id="dataStatus" class="cd-status">Loading medicines…</div>
+      </div>
+
+      <div class="cd-card" id="note">
+        <div class="cd-card-title">Important note</div>
+        <p class="cd-fine">"This information is for basic guidance only. Always consult a doctor before taking any
+          medicine."</p>
+        <div class="cd-divider"></div>
+        <div class="cd-section-title">Quick contacts</div>
+        <div class="cd-fine">Dispensary: <a href="tel:+919876543210" class="cd-mono">+91 98765 43210</a></div>
+        <div class="cd-fine">Doctor / Counselor: <a href="tel:+919812345678" class="cd-mono">+91 98123 45678</a> (Dr. R.
+          Sharma)</div>
+        <div class="cd-fine">Emergency: <a href="tel:112" class="cd-mono">112</a></div>
+      </div>
+    </section>
+
+    <section class="cd-container" id="categories">
+      <h2 class="cd-h2">Medicine classification</h2>
+      <div class="cd-cat-row" id="categoryRow"></div>
+    </section>
+
+    <section class="cd-container" id="medicines">
+      <h2 class="cd-h2">Available medicines</h2>
+      <div class="cd-med-grid" id="medicineGrid"></div>
+    </section>
+  </main>
+
+  <div id="medModalBg" class="cd-modal-bg hidden">
+    <div class="cd-modal" id="medModal">
+      <div class="cd-modal-top">
+        <div class="cd-card-title" id="medModalTitle">Medicine</div>
+        <button class="cd-icon-btn" id="medModalClose" type="button" aria-label="Close">✕</button>
+      </div>
+      <div id="medModalBody"></div>
+    </div>
+  </div>
+
+  <button id="chatFab" class="cd-chat-fab" type="button" aria-label="Open chat">Chat</button>
+
+  <div id="chatPanel" class="cd-chat-panel hidden" role="dialog" aria-label="Chat">
+    <div class="cd-chat-top">
+      <div>
+        <div class="cd-card-title">Campus assistant</div>
+        <div class="cd-card-sub">Demo bot — wire to your backend later</div>
+      </div>
+      <button class="cd-icon-btn" id="chatCloseBtn" type="button" aria-label="Close chat">✕</button>
+    </div>
+    <div class="cd-chat-log" id="chatLog"></div>
+    <form class="cd-chat-form" id="chatForm">
+      <input id="chatInput" class="cd-input" placeholder="Type a message…" />
+      <button class="cd-btn cd-btn-primary" type="submit">Send</button>
+    </form>
+  </div>
+
+  <!-- Supabase JS client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <script>
+    // ===== 1) PASTE YOUR SUPABASE PROJECT URL + ANON KEY HERE =====
+    const SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR-ANON-KEY";
+    // ==============================================================
+
+    // Fallback list — used if Supabase isn't configured or the table is empty.
+    const FALLBACK_MEDS = [
+      { name: "Paracetamol", cat: "fever", description: "Pain & fever relief", dose: "500mg every 4-6h", when_to_take: "After food, when fever > 100°F or for body pain", precautions: "Do not exceed 4g/day. Avoid alcohol.", stock: 120 },
+      { name: "Ibuprofen", cat: "pain", description: "Headache, muscle pain", dose: "400mg every 6-8h", when_to_take: "After food, for pain or inflammation", precautions: "Avoid if you have ulcers or kidney issues.", stock: 80 },
+      { name: "Cetirizine", cat: "allergy", description: "Allergy & sneezing relief", dose: "10mg once daily", when_to_take: "At night, for allergies/itching", precautions: "May cause drowsiness.", stock: 60 },
+      { name: "Cough Syrup", cat: "cold", description: "Dry cough relief", dose: "10ml three times a day", when_to_take: "After meals, when coughing", precautions: "Do not drive after taking.", stock: 35 },
+      { name: "Throat Lozenges", cat: "cold", description: "Sore throat relief", dose: "1 lozenge every 2-3h", when_to_take: "When throat feels sore", precautions: "Max 8 per day.", stock: 200 },
+      { name: "ORS Sachet", cat: "digestive", description: "Rehydration salts", dose: "1 sachet in 1L water", when_to_take: "During dehydration / loose motion", precautions: "Sip slowly. Consult doctor if symptoms persist.", stock: 90 },
+      { name: "Antacid", cat: "digestive", description: "Acidity & heartburn", dose: "1-2 tablets after meals", when_to_take: "After spicy/heavy meals", precautions: "Avoid long-term use without advice.", stock: 50 },
+      { name: "Antiseptic Ointment", cat: "firstaid", description: "Cuts, scrapes, minor burns", dose: "Apply thin layer 2-3x/day", when_to_take: "After cleaning the wound", precautions: "External use only.", stock: 25 },
+      { name: "Bandage Roll", cat: "firstaid", description: "Wound dressing", dose: "As needed", when_to_take: "After applying ointment", precautions: "Keep wound clean and dry.", stock: 40 }
+    ];
+
+    const CATEGORIES = [
+      { label: "Pain relief", sub: "Headache, body pain", value: "pain" },
+      { label: "Fever", sub: "Fever, chills", value: "fever" },
+      { label: "Cold & cough", sub: "Cold, sore throat", value: "cold" },
+      { label: "Allergy", sub: "Sneezing, itching", value: "allergy" },
+      { label: "Digestive", sub: "Acidity, nausea", value: "digestive" },
+      { label: "First aid", sub: "Cuts, antiseptic", value: "firstaid" }
+    ];
+
+    let MEDS = [];
+    const $ = (id) => document.getElementById(id);
+    const searchInput = $("searchInput");
+    const categoryFilter = $("categoryFilter");
+    const medicineGrid = $("medicineGrid");
+    const categoryRow = $("categoryRow");
+    const medModalBg = $("medModalBg");
+    const medModalTitle = $("medModalTitle");
+    const medModalBody = $("medModalBody");
+    const dataStatus = $("dataStatus");
+
+    const supaConfigured = !SUPABASE_URL.includes("YOUR-PROJECT") && !SUPABASE_ANON_KEY.includes("YOUR-ANON-KEY");
+    const supa = supaConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    async function loadMedicines() {
+      if (!supa) {
+        MEDS = FALLBACK_MEDS;
+        dataStatus.textContent = "Showing built-in list. Add your Supabase URL & anon key to load from your database.";
+        return;
+      }
+      dataStatus.textContent = "Loading from Supabase…";
+      const { data, error } = await supa.from("medicines").select("*").order("name");
+      if (error) {
+        console.error(error);
+        MEDS = FALLBACK_MEDS;
+        dataStatus.textContent = "Could not load from Supabase (" + error.message + "). Showing built-in list.";
+        return;
+      }
+      if (!data || data.length === 0) {
+        MEDS = FALLBACK_MEDS;
+        dataStatus.textContent = "Supabase 'medicines' table is empty. Showing built-in list.";
+        return;
+      }
+      MEDS = data;
+      dataStatus.textContent = "Loaded " + data.length + " medicines from Supabase.";
+    }
+
+    function renderCategories() {
+      categoryRow.innerHTML = "";
+      CATEGORIES.forEach((c) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "cd-cat-card";
+        b.innerHTML = `<div class="cd-cat-title">${c.label}</div><div class="cd-fine">${c.sub}</div>`;
+        b.onclick = () => { categoryFilter.value = c.value; renderMedicines(); };
+        categoryRow.appendChild(b);
+      });
+    }
+
+    function renderMedicines() {
+      const q = (searchInput.value || "").toLowerCase().trim();
+      const cat = categoryFilter.value;
+      medicineGrid.innerHTML = "";
+      const filtered = MEDS.filter(
+        (m) =>
+          (cat === "all" || m.cat === cat) &&
+          (q === "" || m.name.toLowerCase().includes(q) || (m.description || "").toLowerCase().includes(q))
+      );
+      if (filtered.length === 0) {
+        medicineGrid.innerHTML = '<div class="cd-fine">No medicines match your search.</div>';
+        return;
+      }
+      filtered.forEach((m) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "cd-med-card";
+        b.innerHTML = `
+          <div class="cd-med-name">${m.name}</div>
+          <div class="cd-fine">${m.description || ""}</div>
+          <div class="cd-med-dose">${m.dose || ""}</div>
+          <div class="cd-med-stock">In stock: ${m.stock ?? 0}</div>`;
+        b.onclick = () => openMed(m);
+        medicineGrid.appendChild(b);
+      });
+    }
+
+    function openMed(m) {
+      medModalTitle.textContent = m.name;
+      medModalBody.innerHTML = `
+        <p><b>Purpose:</b> ${m.description || ""}</p>
+        <p><b>When to take:</b> ${m.when_to_take || ""}</p>
+        <p><b>Dose:</b> ${m.dose || ""}</p>
+        <p><b>Precautions:</b> ${m.precautions || ""}</p>
+        <p class="cd-fine">In stock: ${m.stock ?? 0}</p>`;
+      medModalBg.classList.remove("hidden");
+    }
+
+    medModalBg.addEventListener("click", (e) => { if (e.target === medModalBg) medModalBg.classList.add("hidden"); });
+    $("medModalClose").addEventListener("click", () => medModalBg.classList.add("hidden"));
+    searchInput.addEventListener("input", renderMedicines);
+    categoryFilter.addEventListener("change", renderMedicines);
+
+    // Chat
+    const chatPanel = $("chatPanel");
+    const chatLog = $("chatLog");
+    const chatForm = $("chatForm");
+    const chatInput = $("chatInput");
+
+    function addMsg(text, who) {
+      const d = document.createElement("div");
+      d.className = "cd-msg " + (who === "me" ? "cd-msg-me" : "cd-msg-bot");
+      d.textContent = text;
+      chatLog.appendChild(d);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function botReply(text) {
+      const t = text.toLowerCase();
+      const match = MEDS.find((m) => t.includes(m.name.toLowerCase()));
+      if (match) return `${match.name}: ${match.description || ""}. Dose: ${match.dose || ""}. ${match.precautions || ""}`;
+      if (/(fever|temperature)/.test(t)) return "For fever, Paracetamol 500mg every 4-6h after food. Stay hydrated. See a doctor if it lasts > 3 days.";
+      if (/(cough|cold|throat)/.test(t)) return "For cold/cough, try cough syrup and lozenges, drink warm fluids, and rest.";
+      if (/(allergy|sneeze|itch)/.test(t)) return "Cetirizine 10mg once daily helps allergies. May cause drowsiness.";
+      if (/(stomach|acidity|loose|diarr)/.test(t)) return "ORS for hydration; antacid for acidity. See a doctor if symptoms persist.";
+      if (/(cut|wound|burn)/.test(t)) return "Clean the wound, apply antiseptic ointment, and cover with a bandage.";
+      if (/(hello|hi|hey)/.test(t)) return "Hi! Tell me a symptom or a medicine name and I'll guide you.";
+      return "I'm a basic demo bot. Ask about a symptom (fever, cough, allergy, cuts) or a medicine name.";
+    }
+
+    addMsg("Hi! I'm the Campus Dispensary assistant. Ask me about a medicine, dosage, or what to take for a symptom.", "bot");
+
+    $("chatFab").addEventListener("click", () => chatPanel.classList.toggle("hidden"));
+    $("chatCloseBtn").addEventListener("click", () => chatPanel.classList.add("hidden"));
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const v = chatInput.value.trim();
+      if (!v) return;
+      addMsg(v, "me");
+      chatInput.value = "";
+      setTimeout(() => addMsg(botReply(v), "bot"), 500);
+    });
+
+    renderCategories();
+    (async () => {
+      await loadMedicines();
+      renderMedicines();
+    })();
+  </script>
+</body>
+
+</html>

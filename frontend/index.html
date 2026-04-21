@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNav</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #0f172a;
+      transition: background-color 2s ease-in-out, opacity 0.6s ease;
+      position: relative;
+    }
+
+    /* The 'Lost' Background - Scattered Dots */
+    .maze-container {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .node {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transition: all 2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* Initial 'Lost' State Animations */
+    .lost .node {
+      animation: wander 4s infinite alternate ease-in-out;
+    }
+
+    @keyframes wander {
+      0% { transform: translate(0, 0); opacity: 0.2; }
+      100% { transform: translate(calc(var(--rx) * 30px), calc(var(--ry) * 30px)); opacity: 0.7; background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+    }
+
+    /* Found State - Aligning the nodes into a path */
+    .found .maze-container {
+      opacity: 0.6;
+    }
+
+    .found .node {
+      background: #10b981;
+      width: 8px;
+      height: 8px;
+      box-shadow: 0 0 15px #10b981;
+      animation: pulsateNode 2s infinite alternate;
+    }
+
+    @keyframes pulsateNode {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.5); opacity: 1; }
+    }
+
+    /* Dynamic gradient background that activates on 'found' */
+    .bg-gradient {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(-45deg, #0f172a, #3730A3, #7367f0, #1E1B4B);
+      background-size: 400% 400%;
+      opacity: 0;
+      z-index: 0;
+      transition: opacity 2s ease-in-out;
+    }
+
+    .found .bg-gradient {
+      opacity: 1;
+      animation: gradientShift 10s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Main Card */
+    .card-wrapper {
+      position: relative;
+      z-index: 10;
+      perspective: 1000px;
+    }
+
+    .card {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 60px 40px;
+      border-radius: 30px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+      width: 400px;
+      max-width: 90vw;
+      transform-style: preserve-3d;
+      transition: all 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .lost .card {
+      transform: translateY(10px) rotateX(4deg) rotateY(-4deg);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .found .card {
+      transform: translateY(0) rotateX(0) rotateY(0);
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-content {
+      position: relative;
+      height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .text-state {
+      position: absolute;
+      transition: all 1s ease-in-out;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Lost text state */
+    .text-lost {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .found .text-lost {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.9);
+      pointer-events: none;
+    }
+
+    .text-lost h1 {
+      font-size: 30px;
+      font-weight: 500;
+      color: #f87171;
+      margin-bottom: 8px;
+    }
+    .text-lost p {
+      font-size: 16px;
+      color: #94a3b8;
+    }
+
+    /* Found text state */
+    .text-found {
+      opacity: 0;
+      transform: translateY(20px) scale(0.9);
+      pointer-events: none;
+    }
+    .found .text-found {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .text-found h1 {
+      font-size: 38px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .text-found p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 300;
+      margin-bottom: 25px;
+    }
+
+    .btn {
+      position: relative;
+      padding: 15px 35px;
+      font-size: 18px;
+      font-weight: 500;
+      border: none;
+      border-radius: 50px;
+      background: #ffffff;
+      color: #7367f0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(15px);
+    }
+
+    .found .btn {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.6s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 15px 25px rgba(255,255,255,0.3);
+    }
+    
+    /* Loading pulsing ring for the 'lost' state */
+    .radar {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      top: -20px;
+      border-radius: 50%;
+      border: 2px solid rgba(239, 68, 68, 0.5);
+      animation: radarPulse 2s infinite;
+      opacity: 1;
+      transition: opacity 1s;
+      z-index: -1;
+    }
+    .found .radar {
+      opacity: 0;
+    }
+
+    @keyframes radarPulse {
+      0% { transform: scale(0.3); opacity: 0.8; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    @media (max-width: 480px) {
+    .card {
+        width: 90%; /* Use 90% of the screen width instead of 400px */
+        padding: 40px 20px; /* Smaller padding so text has more room */
+        border-radius: 20px;
+    }
+    .card-content {
+        height: 200px; /* Gives the button more room to sit below the text */
+    }
+    .text-lost h1 { font-size: 24px; }
+    .text-found h1 { font-size: 28px; } /* Shrinks the title so it fits one line */
+    
+    .text-found p { font-size: 15px; }
+    
+    .btn {
+        width: 100%; /* Makes the button a bigger tap target for thumbs */
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+  </style>
+</head>
+<body class="lost">
+
+  <div class="bg-gradient"></div>
+  <a href="landingpages.html" style="position: absolute; top: 20px; left: 20px; color: white; text-decoration: none; font-size: 16px; z-index: 100;">&larr; Back to Hub</a>
+
+  <div class="maze-container" id="maze">
+    <!-- Nodes generated by JS -->
+  </div>
+
+  <div class="card-wrapper">
+    <div class="card">
+      <div class="card-content">
+        
+        <div class="text-state text-lost">
+          <div class="radar"></div>
+          <h1>Lost on Campus?</h1>
+          <p>Analyzing your surroundings...</p>
+        </div>
+
+        <div class="text-state text-found">
+          <h1>📍 CampusNav</h1>
+          <p>Your destination found.</p>
+          <button class="btn" onclick="startNav()">
+            Start Navigation
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Generate scattered nodes
+    const mazeContainer = document.getElementById('maze');
+    const nodes = [];
+    const numNodes = 45;
+
+    for (let i = 0; i < numNodes; i++) {
+      const node = document.createElement('div');
+      node.classList.add('node');
+      
+      const startX = Math.random() * 100;
+      const startY = Math.random() * 100;
+      
+      node.style.setProperty('--rx', (Math.random() - 0.5) * 2);
+      node.style.setProperty('--ry', (Math.random() - 0.5) * 2);
+      
+      node.style.left = startX + 'vw';
+      node.style.top = startY + 'vh';
+      
+      // Random animation delay for the found state pulsation
+      node.style.animationDelay = (Math.random() * 2) + 's';
+      mazeContainer.appendChild(node);
+      nodes.push({ el: node, x: startX, y: startY });
+    }
+
+    // Sequence transition: lost -> found
+    setTimeout(() => {
+      document.body.classList.remove('lost');
+      document.body.classList.add('found');
+
+      // Align nodes to form a connected path sweeping across the screen
+      nodes.forEach((nodeObj, index) => {
+        const el = nodeObj.el;
+        const progress = index / numNodes; 
+        
+        // Target positions to form a curve
+        const targetX = 5 + (progress * 90);
+        const targetY = 50 + Math.sin(progress * Math.PI * 2.5) * 30;
+
+        el.style.left = targetX + 'vw';
+        el.style.top = targetY + 'vh';
+        
+        // Stagger their movement into position
+        el.style.transitionDelay = (Math.random() * 0.4) + 's';
+      });
+
+    }, 3800);
+
+    function startNav() {
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        window.location.href = "select.html";
+      }, 600);
+    }
+  </script>
+</body>
+</html>

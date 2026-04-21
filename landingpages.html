@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Hub</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0b0d12;
+      --surface: #12151d;
+      --card: #181b25;
+      --card-hover: #1e2230;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --text: #eef0f7;
+      --muted: rgba(238, 240, 247, 0.42);
+      --green: #1edd8f;
+      --blue: #38b6ff;
+      --purple: #a78bfa;
+      --amber: #fbbf24;
+      --red: #ff4444;
+      --font-h: 'Syne', sans-serif;
+      --font-b: 'DM Sans', sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: var(--font-b);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .page.active {
+      display: flex;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+
+    /* ── LOGIN ── */
+    #page-login {
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      flex-direction: column;
+    }
+
+    .login-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .login-brand {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-right: 6px;
+      vertical-align: middle;
+      box-shadow: 0 0 14px var(--green);
+    }
+
+    .login-brand h1 {
+      font-family: var(--font-h);
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: inline;
+    }
+
+    .login-brand h1 span {
+      color: var(--green);
+    }
+
+    .login-brand p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+    }
+
+    .role-toggle {
+      display: flex;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 1.75rem;
+    }
+
+    .role-btn {
+      flex: 1;
+      padding: 9px 8px;
+      border: none;
+      border-radius: 9px;
+      background: transparent;
+      font-family: var(--font-h);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .role-btn.active {
+      background: var(--card-hover);
+      color: var(--text);
+      border: 1px solid var(--border-hover);
+    }
+
+    .field-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .field-wrap {
+      margin-bottom: 1.1rem;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--font-b);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field-input:focus {
+      border-color: var(--green);
+    }
+
+    .field-input::placeholder {
+      color: var(--muted);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 13px;
+      margin-top: 0.5rem;
+      background: var(--green);
+      border: none;
+      border-radius: 11px;
+      font-family: var(--font-h);
+      font-size: 15px;
+      font-weight: 700;
+      color: #0b0d12;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .login-btn:hover {
+      opacity: 0.88;
+    }
+
+    .login-btn:active {
+      transform: scale(0.98);
+    }
+
+    .login-error {
+      display: none;
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid rgba(255, 68, 68, 0.3);
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-size: 13px;
+      color: #ff7070;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .login-hint {
+      margin-top: 1.25rem;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      line-height: 1.9;
+    }
+
+    .login-hint b {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── SHARED DASH ── */
+    .dash-page {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      width: 100%;
+      background: rgba(11, 13, 18, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 62px;
+      padding: 0 1.5rem;
+    }
+
+    .topbar-brand {
+      font-family: var(--font-h);
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .topbar-brand span {
+      color: var(--green);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-badge {
+      font-size: 11px;
+      font-family: var(--font-h);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 11px;
+      border-radius: 100px;
+    }
+
+    .badge-user {
+      background: rgba(56, 182, 255, 0.12);
+      color: var(--blue);
+      border: 1px solid rgba(56, 182, 255, 0.25);
+    }
+
+    .badge-admin {
+      background: rgba(251, 191, 36, 0.12);
+      color: var(--amber);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-family: var(--font-b);
+      font-size: 12px;
+      padding: 5px 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .dash-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 580px;
+      padding: 2rem 1rem 3rem;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .dash-greeting {
+      margin-bottom: 2rem;
+    }
+
+    .dash-greeting h2 {
+      font-family: var(--font-h);
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .dash-greeting p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    /* ── USER HUB BUTTONS ── */
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .hub-btn {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.25rem;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      min-height: 140px;
+      text-align: left;
+      overflow: hidden;
+      color: inherit;
+    }
+
+    .hub-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-hover);
+      background: var(--card-hover);
+    }
+
+    .hub-btn:active {
+      transform: scale(0.97);
+    }
+
+    .hub-btn.sos {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      align-items: center;
+      gap: 1.25rem;
+      min-height: 88px;
+      background: rgba(255, 68, 68, 0.06);
+      border-color: rgba(255, 68, 68, 0.3);
+    }
+
+    .hub-btn.sos:hover {
+      background: rgba(255, 68, 68, 0.12);
+      border-color: rgba(255, 68, 68, 0.55);
+      box-shadow: 0 0 28px rgba(255, 68, 68, 0.1);
+    }
+
+    .sos-ring {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .sos-ring::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 2px solid var(--red);
+      animation: sosPulse 1.8s ease-out infinite;
+      opacity: 0;
+    }
+
+    @keyframes sosPulse {
+      0% {
+        transform: scale(0.9);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: scale(1.8);
+        opacity: 0;
+      }
+    }
+
+    .sos .btn-label {
+      font-size: 20px;
+      color: #ff6b6b;
+    }
+
+    .sos .btn-sub {
+      color: rgba(255, 107, 107, 0.55);
+    }
+
+    .btn-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 0.75rem;
+    }
+
+    .hub-btn.dispensary .btn-icon {
+      background: rgba(30, 221, 143, 0.1);
+    }
+
+    .hub-btn.navigation .btn-icon {
+      background: rgba(56, 182, 255, 0.1);
+    }
+
+    .hub-btn.mind-haven .btn-icon {
+      background: rgba(167, 139, 250, 0.1);
+    }
+
+    .hub-btn.library .btn-icon {
+      background: rgba(251, 191, 36, 0.1);
+    }
+
+    .hub-btn.dispensary::after {
+      --g: rgba(30, 221, 143, 0.07);
+    }
+
+    .hub-btn.navigation::after {
+      --g: rgba(56, 182, 255, 0.07);
+    }
+
+    .hub-btn.mind-haven::after {
+      --g: rgba(167, 139, 250, 0.07);
+    }
+
+    .hub-btn.library::after {
+      --g: rgba(251, 191, 36, 0.07);
+    }
+
+    .hub-btn.dispensary::after,
+    .hub-btn.navigation::after,
+    .hub-btn.mind-haven::after,
+    .hub-btn.library::after {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--g);
+      pointer-events: none;
+      transition: transform 0.3s;
+    }
+
+    .hub-btn:hover::after {
+      transform: scale(1.5);
+    }
+
+    .btn-label {
+      font-family: var(--font-h);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .btn-sub {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .btn-arrow {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      font-size: 15px;
+      color: var(--muted);
+      transition: transform 0.2s, color 0.2s;
+    }
+
+    .hub-btn:hover .btn-arrow {
+      transform: translate(2px, -2px);
+      color: var(--text);
+    }
+
+    /* ── ADMIN ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: var(--font-h);
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .stat-card.s-green .stat-num {
+      color: var(--green);
+    }
+
+    .stat-card.s-blue .stat-num {
+      color: var(--blue);
+    }
+
+    .stat-card.s-amber .stat-num {
+      color: var(--amber);
+    }
+
+    .section-title {
+      font-family: var(--font-h);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .admin-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .admin-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-hover);
+      background: var(--card-hover);
+    }
+
+    .admin-card:active {
+      transform: scale(0.97);
+    }
+
+    .a-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .a-red {
+      background: rgba(214, 208, 208, 0.81);
+    }
+
+    .a-blue {
+      background: rgba(56, 182, 255, 0.1);
+    }
+
+    .a-green {
+      background: rgba(30, 221, 143, 0.1);
+    }
+
+    .a-purple {
+      background: rgba(167, 139, 250, 0.1);
+    }
+
+    .a-amber {
+      background: rgba(251, 191, 36, 0.1);
+    }
+
+    .a-title {
+      font-family: var(--font-h);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .a-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .alert-badge {
+      margin-left: auto;
+      background: rgba(255, 68, 68, 0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(255, 68, 68, 0.3);
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .feed-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fd {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .fd.red {
+      background: var(--red);
+    }
+
+    .fd.green {
+      background: var(--green);
+    }
+
+    .fd.blue {
+      background: var(--blue);
+    }
+
+    .fd.amber {
+      background: var(--amber);
+    }
+
+    .feed-text {
+      font-size: 13px;
+      flex: 1;
+    }
+
+    .feed-time {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── RIPPLE ── */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: rippleAnim 0.55s linear;
+      background: rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+    }
+
+    @keyframes rippleAnim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: #c4c8d5;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      padding: 0.5rem 1.4rem;
+      font-size: 13px;
+      color: var(--text);
+      z-index: 999;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 420px) {
+
+      .btn-grid,
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hub-btn.sos {
+        grid-column: 1;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="bg-grid"></div>
+
+  <!-- ══════════════ LOGIN ══════════════ -->
+  <div class="page active" id="page-login">
+    <div class="login-wrap">
+
+      <div class="login-brand">
+        <div><span class="logo-dot"></span>
+          <h1>SMART<span> CAMPUS</span></h1>
+        </div>
+        <p>Sign in to access your campus services</p>
+      </div>
+
+      <div class="login-card">
+        <div class="role-toggle">
+          <button class="role-btn active" id="role-user-btn" onclick="setRole('user')">👤 Student / Staff</button>
+          <button class="role-btn" id="role-admin-btn" onclick="setRole('admin')">🛡️ Admin</button>
+        </div>
+
+        <div class="login-error" id="login-error">Invalid credentials. Please try again.</div>
+
+        <div class="field-wrap">
+          <label class="field-label">Username</label>
+          <input class="field-input" id="inp-user" type="text" placeholder="Enter username" autocomplete="username" />
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Password</label>
+          <input class="field-input" id="inp-pass" type="password" placeholder="Enter password"
+            onkeydown="if(event.key==='Enter') doLogin()" />
+        </div>
+
+        <button class="login-btn" onclick="doLogin()">Sign In &rarr;</button>
+
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button class="login-btn"
+            style="flex:1; background:transparent; color:var(--muted); border:1px solid var(--border);"
+            onclick="testSupabase()">Test Supabase</button>
+          <button class="login-btn"
+            style="flex:1; background:transparent; color:var(--muted); border:1px solid var(--border);"
+            onclick="signUp()">Create account</button>
+        </div>
+
+        <div class="login-hint">
+          <b>Demo credentials</b><br>
+          Student: <b>user</b> / <b>user123</b> &nbsp;&nbsp;|&nbsp;&nbsp; Admin: <b>admin</b> / <b>admin123</b>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════ USER DASHBOARD ══════════════ -->
+  <div class="page dash-page" id="page-user">
+    <div class="topbar">
+      <div class="topbar-brand" onclick="window.location.href='index.html'" style="cursor:pointer">Smart<span>
+          campus</span></div>
+      <div class="topbar-right">
+        <span class="topbar-badge badge-user">Student</span>
+        <button class="logout-btn" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+
+    <div class="dash-content">
+      <div class="dash-greeting">
+        <h2>Hello, <span id="user-name-disp" style="color:var(--green)">Student</span> 👋</h2>
+        <p>What do you need today?</p>
+      </div>
+
+      <div class="btn-grid">
+
+        <button class="hub-btn sos" onclick="hubClick(this,'🚨 Emergency alert sent! Help is on the way.')">
+          <div class="sos-ring">🆘</div>
+          <div>
+            <div class="btn-label">SOS</div>
+            <div class="btn-sub">Tap to alert emergency services</div>
+          </div>
+        </button>
+
+        <button class="hub-btn dispensary"
+          onclick="navigateWithDelay(this, '💊 Opening Dispensary...', 'dispancry.html')">
+          <div class="btn-icon">💊</div>
+          <div>
+            <div class="btn-label">Dispensary</div>
+            <div class="btn-sub">Medicines &amp; first aid</div>
+          </div>
+          <span class="btn-arrow">↗</span>
+        </button>
+
+        <button class="hub-btn navigation"
+          onclick="navigateWithDelay(this, '🧭 Loading indoor map...', 'index.html')">
+          <div class="btn-icon">🧭</div>
+          <div>
+            <div class="btn-label">Indoor Navigation</div>
+            <div class="btn-sub">Find rooms &amp; buildings</div>
+          </div>
+          <span class="btn-arrow">↗</span>
+        </button>
+
+        <button class="hub-btn mind-haven"
+          onclick="navigateWithDelay(this, '🧠 Opening Mind Haven...', 'mindhaven.html')">
+          <div class="btn-icon">🧠</div>
+          <div>
+            <div class="btn-label">Mind Heaven</div>
+            <div class="btn-sub">Mental wellness support</div>
+          </div>
+          <span class="btn-arrow">↗</span>
+        </button>
+
+        <button class="hub-btn library"
+          onclick="navigateWithDelay(this, '📚 Opening Library portal...', 'library.html')">
+          <div class="btn-icon">📚</div>
+          <div>
+            <div class="btn-label">Library</div>
+            <div class="btn-sub">Books &amp; digital resources</div>
+          </div>
+          <span class="btn-arrow">↗</span>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ ADMIN DASHBOARD ══════════════ -->
+  <div class="page dash-page" id="page-admin">
+    <div class="topbar">
+      <div class="topbar-brand">Campus<span> Hub</span></div>
+      <div class="topbar-right">
+        <span class="topbar-badge badge-admin">Admin</span>
+        <button class="logout-btn" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+
+    <div class="dash-content">
+      <div class="dash-greeting">
+        <h2>Admin <span style="color:var(--amber)">Panel</span> 🛡️</h2>
+        <p>Manage and monitor all campus services</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card s-green">
+          <div class="stat-num">248</div>
+          <div class="stat-label">Active Users</div>
+        </div>
+        <div class="stat-card s-blue">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Services Online</div>
+        </div>
+        <div class="stat-card s-amber">
+          <div class="stat-num">3</div>
+          <div class="stat-label">SOS Alerts</div>
+        </div>
+      </div>
+
+      <div class="section-title">Service Management</div>
+      <div class="admin-grid">
+
+        <div class="admin-card" onclick="adminClick('SOS Alert Management')">
+          <div class="a-icon a-red">🚨</div>
+          <div>
+            <div class="a-title">SOS Alerts</div>
+            <div class="a-sub">View &amp; respond</div>
+          </div>
+          <span class="alert-badge">3 new</span>
+        </div>
+
+        <div class="admin-card" onclick="adminClick('User Management')">
+          <div class="a-icon a-blue">👥</div>
+          <div>
+            <div class="a-title">Users</div>
+            <div class="a-sub">Manage accounts</div>
+          </div>
+        </div>
+
+        <div class="admin-card" onclick="adminClick('Dispensary Management')">
+          <div class="a-icon a-green">💊</div>
+          <div>
+            <div class="a-title">Dispensary</div>
+            <div class="a-sub">Stock &amp; requests</div>
+          </div>
+        </div>
+
+        <div class="admin-card" onclick="adminClick('Indoor Navigation Settings')">
+          <div class="a-icon a-blue">🧭</div>
+          <div>
+            <div class="a-title">Navigation</div>
+            <div class="a-sub">Update floor maps</div>
+          </div>
+        </div>
+
+        <div class="admin-card" onclick="adminClick('Mind Haven Settings')">
+          <div class="a-icon a-purple">🧠</div>
+          <div>
+            <div class="a-title">Mind Haven</div>
+            <div class="a-sub">Counsellor slots</div>
+          </div>
+        </div>
+
+        <div class="admin-card" onclick="adminClick('Library Management')">
+          <div class="a-icon a-amber">📚</div>
+          <div>
+            <div class="a-title">Library</div>
+            <div class="a-sub">Catalogue &amp; users</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="section-title">Recent Activity</div>
+      <div class="feed">
+        <div class="feed-item">
+          <div class="fd red"></div>
+          <div class="feed-text">SOS triggered — Block C, Room 204</div>
+          <div class="feed-time">2 min ago</div>
+        </div>
+        <div class="feed-item">
+          <div class="fd green"></div>
+          <div class="feed-text">Dispensary request — Paracetamol (Rahul S.)</div>
+          <div class="feed-time">8 min ago</div>
+        </div>
+        <div class="feed-item">
+          <div class="fd blue"></div>
+          <div class="feed-text">Navigation map updated — Block A Floor 2</div>
+          <div class="feed-time">22 min ago</div>
+        </div>
+        <div class="feed-item">
+          <div class="fd amber"></div>
+          <div class="feed-text">New library book request — 5 pending</div>
+          <div class="feed-time">1 hr ago</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const CREDS = {
+      user: { pass: 'user123', page: 'page-user', name: 'Student' },
+      admin: { pass: 'admin123', page: 'page-admin', name: 'Admin' }
+    };
+
+    let selectedRole = 'user';
+    let toastTimer;
+
+    function setRole(r) {
+      selectedRole = r;
+      document.getElementById('role-user-btn').classList.toggle('active', r === 'user');
+      document.getElementById('role-admin-btn').classList.toggle('active', r === 'admin');
+      document.getElementById('login-error').style.display = 'none';
+    }
+
+    async function doLogin() {
+      const u = document.getElementById('inp-user').value.trim();
+      const p = document.getElementById('inp-pass').value.trim();
+
+      // Try Supabase auth first (email/password)
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email: u, password: p });
+        if (!error && data?.user) {
+          const user = data.user;
+          document.getElementById('user-name-disp').textContent = user.email || 'User';
+          showPage('page-user');
+          showToast('Signed in with Supabase');
+          return;
+        }
+      } catch (err) {
+        console.warn('Supabase signIn error', err);
+      }
+
+      // Fallback to demo credentials
+      const c = CREDS[selectedRole];
+      if (u === selectedRole && p === c.pass) {
+        document.getElementById('user-name-disp').textContent = c.name;
+        showPage(c.page);
+      } else {
+        const e = document.getElementById('login-error');
+        e.style.display = 'block';
+        document.getElementById('inp-pass').value = '';
+        setTimeout(() => e.style.display = 'none', 3000);
+      }
+    }
+
+    function logout() {
+      // Sign out from Supabase if signed in, then return to login UI
+      supabaseClient.auth.signOut().catch(() => { });
+      document.getElementById('inp-user').value = '';
+      document.getElementById('inp-pass').value = '';
+      showPage('page-login');
+    }
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function hubClick(btn, msg) {
+      spawnRipple(btn);
+      showToast(msg);
+    }
+
+    function adminClick(label) {
+      showToast('Opening: ' + label + '...');
+    }
+
+    function spawnRipple(btn) {
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      const s = Math.max(btn.offsetWidth, btn.offsetHeight);
+      Object.assign(r.style, { width: s + 'px', height: s + 'px', left: '50%', top: '50%', marginLeft: -(s / 2) + 'px', marginTop: -(s / 2) + 'px' });
+      btn.appendChild(r);
+      setTimeout(() => r.remove(), 600);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+  </script>
+
+  <!-- Supabase client setup -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+  <script>
+    // Replace the anon key with your project's public anon key from Supabase (do NOT commit secrets).
+    const SUPABASE_URL = 'https://szdinakwiprbbskvbizg.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_ibnmsFv4x3s3TS5fhEo0zg_y2jidNYw';
+
+    // Initialize client
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Small helper to test the connection. Open browser console and call `testSupabase()`.
+    async function testSupabase() {
+      try {
+        const { data: user, error } = await supabaseClient.auth.getUser();
+        console.log('Supabase init OK — auth.getUser()', { user, error });
+        if (error) console.warn(error);
+        showToast('Supabase initialized; check console.');
+      } catch (err) {
+        console.error('Supabase test failed', err);
+        showToast('Supabase test failed; check console.');
+      }
+    }
+
+    async function signUp() {
+      const email = prompt('Enter email for new account:');
+      if (!email) return;
+      const password = prompt('Enter password (min 6 chars):');
+      if (!password) return;
+      try {
+        const { data, error } = await supabaseClient.auth.signUp({ email, password });
+        if (error) {
+          console.error('Sign up error', error);
+          showToast('Sign up failed; check console.');
+        } else {
+          console.log('Sign up', data);
+          showToast('Sign up OK; check your email if confirmation required.');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Sign up error; check console.');
+      }
+    }
+
+    // Listen for auth changes to update UI
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        document.getElementById('user-name-disp').textContent = session.user.email || 'User';
+        showPage('page-user');
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusNav — G.N.E. College Engineering Block</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f0f4f8;--surface:#ffffff;--surface2:#f7fafc;--border:#dde3ea;--border2:#c8d3dd;
+    --text:#1a2332;--muted:#7a8fa3;--accent:#0066cc;--accent2:#0052a3;
+    --green:#00b050;--orange:#e07800;--purple:#7c3aed;--red:#cc2222;
+    --nav-from:#00b050;--nav-to:#cc2222;--nav-path:#0066cc;
+    --f0-wall:#d9e6f2;--f0-wall-dark:#b8ceea;--f1-wall:#e2d9f3;--f1-wall-dark:#c9b8ea;--f2-wall:#d9f2e6;--f2-wall-dark:#b8eace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);font-family:'Syne',sans-serif;color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+  #topbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:50px;background:var(--surface);border-bottom:2px solid var(--border);flex-shrink:0;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,0.07);}
+  #topbar h1{font-size:14px;font-weight:800;color:var(--accent);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
+  #topbar h1 span{color:var(--text);opacity:0.5;font-weight:400;font-size:11px;margin-left:8px;letter-spacing:1px;}
+  .view-grp{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:8px;border:1px solid var(--border);}
+  .view-btn{padding:5px 14px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;background:transparent;border:none;color:var(--muted);cursor:pointer;border-radius:5px;letter-spacing:1px;transition:all 0.2s;}
+  .view-btn.on{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(0,102,204,0.3);}
+  #main{display:flex;flex:1;overflow:hidden;}
+  #cv-wrap{flex:1;cursor:grab;position:relative;background:linear-gradient(135deg,#e8eef4 0%,#f0f4f8 50%,#e4ecf4 100%);}
+  #cv-wrap:active{cursor:grabbing;}
+  canvas{display:block;}
+  #sidebar{width:300px;background:var(--surface);border-left:2px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;box-shadow:-4px 0 20px rgba(0,0,0,0.06);}
+  .s-sec{padding:14px 16px;border-bottom:1px solid var(--border);}
+  .s-title{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:10px;letter-spacing:2px;font-family:'JetBrains Mono',monospace;}
+  #nav-panel{padding:14px 16px;border-bottom:1px solid var(--border);}
+  .nav-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .nav-header .s-title{margin-bottom:0;}
+  .nav-mode-badge{font-size:8px;font-family:'JetBrains Mono',monospace;background:rgba(0,102,204,0.08);color:var(--accent);border:1px solid var(--accent);border-radius:10px;padding:2px 8px;letter-spacing:1px;}
+  .nav-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .nav-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:2px solid;}
+  .nav-dot.from{background:rgba(0,176,80,0.2);border-color:var(--nav-from);}
+  .nav-dot.to{background:rgba(204,34,34,0.15);border-color:var(--nav-to);}
+  .nav-select{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;padding:6px 8px;cursor:pointer;outline:none;transition:border-color 0.2s;}
+  .nav-select:focus{border-color:var(--accent);}
+  .btn-nav{width:100%;margin-top:10px;padding:10px;background:linear-gradient(135deg,#0052a3,#0066cc);border:none;border-radius:7px;color:#fff;font-weight:700;font-size:11px;font-family:'Syne',sans-serif;letter-spacing:1px;cursor:pointer;transition:all 0.2s;box-shadow:0 3px 12px rgba(0,102,204,0.25);}
+  .btn-nav:hover{background:linear-gradient(135deg,#0066cc,#0080ff);}... (truncated for brevity)
