@@ -352,5 +352,28 @@
       }, 600);
     }
   </script>
+  <script>
+    // Quick backend connectivity test — shows a small toast when backend responds
+    fetch('/api/ping')
+      .then(r => r.json())
+      .then(j => {
+        console.log('API ping:', j);
+        if (j && j.ok) {
+          const status = document.createElement('div');
+          status.style.position = 'fixed';
+          status.style.right = '12px';
+          status.style.bottom = '12px';
+          status.style.padding = '8px 12px';
+          status.style.background = 'rgba(16,185,129,0.95)';
+          status.style.color = '#fff';
+          status.style.borderRadius = '8px';
+          status.style.zIndex = 9999;
+          status.textContent = 'Backend: ' + (j.message || 'ok');
+          document.body.appendChild(status);
+          setTimeout(() => status.remove(), 3500);
+        }
+      })
+      .catch(err => console.warn('Backend ping failed', err));
+  </script>
 </body>
 </html>
